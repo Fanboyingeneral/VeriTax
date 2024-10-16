@@ -21,6 +21,6 @@ jobs:
 
       - name: Notify deps2.dev
         run: |
-          curl -X POST http://127.0.0.1:5000/v3alpha/systems/npm/packages/express/newVersion \
+          curl -X POST http://127.0.0.1:5000/v3alpha/systems/npm/packages/veritax/newVersion \
           -H "Content-Type: application/json" \
           -d '{"version": "2.0.0"}'
