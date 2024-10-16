@@ -1,36 +1,26 @@
-name: Notify deps.dev of new release
+name: Notify New Version
 
 on:
   push:
     branches:
-      - main
-  workflow_dispatch:
+      - main  # Adjust this to your main branch if needed
 
 jobs:
-  notify-deps:
+  notify:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Read version from version.txt
-      id: get_version
-      run: |
-        VERSION=$(cat version.txt)
-        echo "version=$VERSION" >> $GITHUB_ENV
+      - name: Read version from version.txt
+        id: read_version
+        run: |
+          VERSION=$(cat version.txt)
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
-    - name: Notify deps.dev of new release
-      env:
-        DEPS_API_URL: "https://api.deps.dev/v3alpha/systems/npm/packages/veritax/versions"
-        DEPS_API_TOKEN: ${{ secrets.DEPS_API_TOKEN }}  # Store the token in GitHub Secrets
-      run: |
-        curl -X POST "$DEPS_API_URL" \
-          -H "Authorization: Bearer $DEPS_API_TOKEN" \
+      - name: Notify deps2.dev
+        run: |
+          curl -X POST "http://127.0.0.1:5000/v3alpha/systems/npm/packages/veritax/newVersion" \
           -H "Content-Type: application/json" \
-          -d '{
-                "version": "'"$version"'",
-                "metadata": {
-                  "released_at": "'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"
-                }
-              }'
+          -d '{"version": "${{ env.VERSION }}"}'
